@@ -194,8 +194,8 @@ bool loadConfig()
 		return false;
 	}
 	
-	//Serial.flush();
-    //serializeJsonPretty(configDoc, Serial);
+	Serial.flush();
+  //  serializeJsonPretty(configDoc, Serial);
 
 	sitename = configDoc["site"]["sitename"];
 	pssid = configDoc["site"]["pssid"];
@@ -210,6 +210,7 @@ bool loadConfig()
 	mqttTopicCtrl = configDoc["site"]["mqtt_topic_ctrl"];
 	mqttUid = configDoc["site"]["mqtt_uid"];
 	mqttPwd = configDoc["site"]["mqtt_pwd"];
+    otaPwd = configDoc["site"]["otapwd"];
 	debug = configDoc["site"]["debug"];
 	sensorCheckDelay = configDoc["site"]["sensorcheckdelay"];
     sendDataDelay = configDoc["site"]["senddatadelay"];
@@ -230,17 +231,22 @@ bool loadConfig()
 		pressureSensors[i].maxP = configDoc["sensordefs"][i]["maxP"];
 		pressureSensors[i].offset = configDoc["sensordefs"][i]["offset"];
 		pressureSensors[i].numSetPoints = configDoc["sensordefs"][i]["numsetpoints"];
-		msgn = snprintf(msgbuff, MSGBUFFLEN, "\npressureSensors[%i].numSetPoints = %i", i, pressureSensors[i].numSetPoints);
-		outputMsg(msgbuff);
+		if (debug)
+		{
+			msgn = snprintf(msgbuff, MSGBUFFLEN, "\npressureSensors[%i].numSetPoints = %i", i, pressureSensors[i].numSetPoints);
+			outputMsg(msgbuff);
+		}
 		pressureSensors[i].setPoints = new setPoint_t[pressureSensors[i].numSetPoints];
 		for (int s = 0; s < pressureSensors[i].numSetPoints; s++)
 		{
 			pressureSensors[i].setPoints[s].setP = configDoc["sensordefs"][i]["setpoints"][s]["setp"];
-			msgn = snprintf(msgbuff, MSGBUFFLEN, "\npressureSensors[%i].setPoints[%i].setP = %f", i, s, pressureSensors[i].setPoints[s].setP);
-			outputMsg(msgbuff);
+			if (debug)
+			{
+				msgn = snprintf(msgbuff, MSGBUFFLEN, "\npressureSensors[%i].setPoints[%i].setP = %f", i, s, pressureSensors[i].setPoints[s].setP);
+				outputMsg(msgbuff);
+			}
 			pressureSensors[i].setPoints[s].setPType = configDoc["sensordefs"][i]["setpoints"][s]["setptype"];
-			pressureSensors[i].setPoints[s].hystComp = configDoc["sensordefs"][i]["setpoints"][s]["hystcomp"];
-			Serial.print("\npressureSensors[i].setPoints[s].hystComp=");Serial.println(pressureSensors[i].setPoints[s].hystComp);			
+			pressureSensors[i].setPoints[s].hystComp = configDoc["sensordefs"][i]["setpoints"][s]["hystcomp"];		
 			pressureSensors[i].setPoints[s].hystSamples = configDoc["sensordefs"][i]["setpoints"][s]["hystsamples"];
 			pressureSensors[i].setPoints[s].hystSampleDelay = configDoc["sensordefs"][i]["setpoints"][s]["hystsampledelay"];
 			pressureSensors[i].setPoints[s].hystCount = configDoc["sensordefs"][i]["setpoints"][s]["hystcount"];
