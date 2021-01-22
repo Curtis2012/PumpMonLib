@@ -11,7 +11,8 @@
  * 2020-09-17 C. Collins hysteresis related changes made
  */
 
-#include "FS.h"
+//#include "FS.h"
+#include "SPIFFS.h"
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 #include "timer.h"          // by Michael Contreras
@@ -88,6 +89,7 @@ struct pressureSensor_t {
 
 struct relay_t {
   unsigned int pin = 0;
+  bool hiTrigger = true;
   bool stopPump = false;
   bool closed = false;
   std::uint8_t alarmFlags = 0;
@@ -114,12 +116,12 @@ unsigned long int sendDataDelay = 5000;
 #define NUMALARMS 5
 
 
-struct alarm {
+struct alarm_t {
 	std::uint8_t alarmType;
 	char alarmName[15];
 };
 
-alarm alarms[NUMALARMS] = {
+alarm_t alarms[NUMALARMS] = {
   {HIPALARM, "HIP"},
   {LOPALARM, "LOP"},
   {PSENSORFAULT, "PSENSORFAULT"},
@@ -258,6 +260,7 @@ bool loadConfig()
 	for (int i = 0; i < numRelays; i++)
 	{
 	    relays[i].pin = configDoc["relaydefs"][i]["pin"];
+		relays[i].hiTrigger = configDoc["relaydefs"][i]["hitrigger"];
 	}
 	
 
