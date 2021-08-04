@@ -30,6 +30,8 @@ StaticJsonDocument<MAXJSONSIZE> pumpmsg;
 
 int startingSensorNum = -1;
 int startingRelayNum = -1;
+int ntpRetryCnt = 0;
+int mdnsRetryCnt = 0;
 
 
 //
@@ -219,6 +221,8 @@ bool loadConfig()
     sendDataDelay = configDoc["site"]["senddatadelay"];
 	numSensors = configDoc["site"]["numSensors"];
 	numRelays = configDoc["site"]["numRelays"];
+	ntpRetryCnt = configDoc["site"]["ntpretrycnt"];
+	mdnsRetryCnt = configDoc["site"]["mdnsRetryCnt"];
 	
 	startingSensorNum = configDoc["site"]["startingSensorNum"];
 	startingRelayNum = configDoc["site"]["startingRelayNum"];
